@@ -6,7 +6,7 @@ from sklearn.metrics import (
     roc_auc_score,
     roc_curve)
 
-from fingertip_universe.binning_utils import (
+from FingertipUniverse.binning_utils import (
     cut_bins,
     make_bin,
     chi2merge
