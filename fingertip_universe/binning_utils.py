@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 
+
 def cut_bins(x, n_bins=10, method='freq'):
     """
     数值类特征基础的获取分箱bound的方式
@@ -9,7 +10,7 @@ def cut_bins(x, n_bins=10, method='freq'):
     :param method: 分箱的方式 默认 'freq' 等频率分箱，'dist' 对应等间距分箱 ,'chi2' 卡方分箱 ,'bestks' 对应best ks分箱
     :return: list
     """
-    data = np.array(x,copy=True,dtype=np.float64)
+    data = np.array(x, copy=True, dtype=np.float64)
     data = data[~np.isnan(data)]
     if method == 'freq':
         sorted_data = np.sort(data)
@@ -17,8 +18,10 @@ def cut_bins(x, n_bins=10, method='freq'):
         indices = np.linspace(0, len(sorted_data) - 1, n_bins + 1, dtype=int)
         bin_edges = sorted_data[indices]
         bin_edges = np.unique(bin_edges)
-        if len(bin_edges)<3:
-            bin_edges = np.insert(bin_edges,0,-np.inf)
+        if len(bin_edges) < n_bins:
+            bin_edges = np.insert(bin_edges, 0, -np.inf)
+        else:
+            bin_edges[0] = -np.inf
         return bin_edges
     elif method == 'dist':
         max_v = np.max(data)
