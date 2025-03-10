@@ -6,7 +6,7 @@ with open(HERE / "requirements.txt", encoding="utf-8") as f:
     requirements = [line.strip() for line in f if line.strip() and not line.startswith("#")]
 
 setup(
-    name="fingertip_universe",
+    name="FingertipUniverse",
     version="1.0.0",
     author="LXL",
     author_email="331942615@qq.com",
