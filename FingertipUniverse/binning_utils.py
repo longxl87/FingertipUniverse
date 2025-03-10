@@ -33,7 +33,7 @@ def cut_bins(x, n_bins=10, method='freq'):
     else:
         raise ValueError('method must be \'freq\' or \'dist\'')
 
-def chi2merge(y_true, y_score, num_bins=10, num_fillna=-999, cate_fillna=""):
+def chi2merge(y, x, num_bins=10, num_fillna=-999, cate_fillna=""):
     def _init_grouped(grouped):
         grd_arr = grouped.values
         bin_n = len(grd_arr)
@@ -63,12 +63,12 @@ def chi2merge(y_true, y_score, num_bins=10, num_fillna=-999, cate_fillna=""):
         a, b, c, d = float(a), float(b), float(c), float(d)
         return ((a + b + c + d) * ((a * d - b * c) ** 2)) / ((a + b) * (c + d) * (b + d) * (a + c))
 
-    y_true = np.asarray(y_true)
-    y_score = np.asarray(y_score)
+    y = np.asarray(y)
+    x = np.asarray(x)
     data = pd.DataFrame({
-        'y': y_true, 'x': y_score
+        'y': y, 'x': x
     })
-    if pd.api.types.is_numeric_dtype(y_score):
+    if pd.api.types.is_numeric_dtype(x):
         data['x'] = data['x'].fillna(num_fillna)
     else:
         data['x'] = data['x'].fillna(cate_fillna)
@@ -79,7 +79,7 @@ def chi2merge(y_true, y_score, num_bins=10, num_fillna=-999, cate_fillna=""):
         bad_rate=('y', 'mean')
     ).reset_index()
     grouped['good'] = grouped['total'] - grouped['bad']
-    if pd.api.types.is_numeric_dtype(y_score):
+    if pd.api.types.is_numeric_dtype(x):
         grouped['var'] = pd.qcut(grouped['x'], 200, duplicates='drop')
         grouped['var'] = grouped['var'].map(lambda x: x.right)
     else:
@@ -116,23 +116,23 @@ def chi2merge(y_true, y_score, num_bins=10, num_fillna=-999, cate_fillna=""):
     bounds[len(bounds) - 1] = max_var
     x_var_df['bin'] = x_var_df['var'].map(lambda x: np.digitize(x, bounds))
 
-    if pd.api.types.is_numeric_dtype(y_score):
+    if pd.api.types.is_numeric_dtype(x):
         result = bounds
     else:
         result = dict(zip(x_var_df['x'], x_var_df['bin']))
     return result
 
-def make_bin(y_score, bins, num_fillna=-999, cate_fillna=""):
+def make_bin(x, bins, num_fillna=-999, cate_fillna=""):
     """
     根据传入的数据对结果映射分箱，自动填充缺失值，并约束上限
-    :param y_score: 待分箱的特征
+    :param x: 待分箱的特征
     :param bins: 数值型特征为 list:number, 类别特征为 dict(string:int)
     :param num_fillna: 数值型特征默认填充的方式
     :param cate_fillna: 类别特征默认的填充方式
     :return:
     """
-    data = np.asarray(y_score)
-    if pd.api.types.is_numeric_dtype(y_score):
+    data = np.asarray(x)
+    if pd.api.types.is_numeric_dtype(x):
         bins = np.asarray(bins)
         data[np.isnan(data)] = num_fillna
         bound_max = np.max(bins)
