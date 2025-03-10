@@ -12,36 +12,36 @@ from FingertipUniverse.binning_utils import (
     chi2merge
 )
 
-def calc_auc(y_true, y_score):
+def calc_auc(y, x):
     """
     计算评分或者特征的auc
-    :param y_true:
-    :param y_score:
+    :param y:
+    :param x:
     :return:
     """
-    return roc_auc_score(y_true, y_score)
+    return roc_auc_score(y, x)
 
-def calc_psi(x_true, x_pred, n_bins=10, method='freq', alpha=0.1):
+def calc_psi(y, x, n_bins=10, method='freq', alpha=0.1):
     """
     计算两组特征的psi
-    :param x_true:
-    :param x_pred:
+    :param y:
+    :param x:
     :param n_bins:
     :param method:
     :param alpha:
     :return:
     """
-    if pd.api.types.is_numeric_dtype(x_true):
-        bound = cut_bins(x_true, n_bins=n_bins, method=method)
-        x_base_bins = np.array(make_bin(x_true, bound, num_fillna=-999))
-        x_pred_bins = np.array(make_bin(x_pred, bound, num_fillna=-999))
+    if pd.api.types.is_numeric_dtype(y):
+        bound = cut_bins(y, n_bins=n_bins, method=method)
+        x_base_bins = np.array(make_bin(y, bound, num_fillna=-999))
+        x_pred_bins = np.array(make_bin(x, bound, num_fillna=-999))
     else:
-        x_base_bins = x_true
-        x_pred_bins = x_pred
+        x_base_bins = y
+        x_pred_bins = x
 
     b_bins = np.unique(np.concatenate((x_base_bins, x_pred_bins)))
-    n_base = len(x_true) + len(b_bins) * alpha
-    n_pred = len(x_pred) + len(b_bins) * alpha
+    n_base = len(y) + len(b_bins) * alpha
+    n_pred = len(x) + len(b_bins) * alpha
 
     psi_mapping = []
     for bin in b_bins:
@@ -56,33 +56,33 @@ def calc_psi(x_true, x_pred, n_bins=10, method='freq', alpha=0.1):
     return psi
 
 
-def calc_iv(y_true, y_score, n_bins=10, method='freq', fillna=-999, alpha=0.1):
+def calc_iv(y, x, n_bins=10, method='freq', fillna=-999, alpha=0.1):
     """
     简单计算IV值
-    :param y_true:
-    :param y_score:
+    :param y:
+    :param x:
     :param n_bins:
     :param method:
     :param fillna:
     :param alpha:
     :return:
     """
-    y_true = np.array(y_true,copy=True)
-    y_score = np.array(y_score,copy=True)
+    y = np.array(y, copy=True)
+    x = np.array(x, copy=True)
 
-    if pd.api.types.is_numeric_dtype(y_score):
-        bound = cut_bins(y_score, n_bins, method)
-        y_pred_bins = np.asarray(make_bin(y_score, bound, num_fillna=fillna))
+    if pd.api.types.is_numeric_dtype(x):
+        bound = cut_bins(x, n_bins, method)
+        y_pred_bins = np.asarray(make_bin(x, bound, num_fillna=fillna))
     else:
-        bound = chi2merge(y_true, y_score, n_bins)
-        y_pred_bins = np.asarray(make_bin(y_score, bound))
+        bound = chi2merge(y, x, n_bins)
+        y_pred_bins = np.asarray(make_bin(x, bound))
 
-    data = np.column_stack((y_true, y_pred_bins))
+    data = np.column_stack((y, y_pred_bins))
 
     iv_arr = []
     bins = np.unique(y_pred_bins)
-    N_g = (y_true == 0).sum() + (alpha * len(bins))
-    N_b = (y_true == 1).sum() + (alpha * len(bins))
+    N_g = (y == 0).sum() + (alpha * len(bins))
+    N_b = (y == 1).sum() + (alpha * len(bins))
     for bin in bins:
         data_bin = data[data[:, 1] == bin]
         n_g = (data_bin[:, 0] == 0).sum() + alpha
@@ -94,16 +94,16 @@ def calc_iv(y_true, y_score, n_bins=10, method='freq', fillna=-999, alpha=0.1):
     iv = sum(iv_arr)
     return iv
 
-def calc_ks(y_true, y_score):
+def calc_ks(y, x):
     """
     计算评分或者特征的ks结果
-    :param y_true:
-    :param y_score:
+    :param y:
+    :param x:
     :return:
     """
-    y_true = np.asarray(y_true)
-    y_score = np.asarray(y_score)
-    fpr, tpr, _ = roc_curve(y_true, y_score)
+    y = np.asarray(y)
+    x = np.asarray(x)
+    fpr, tpr, _ = roc_curve(y, x)
     ks = np.max(np.abs(fpr - tpr))
     return ks
 
