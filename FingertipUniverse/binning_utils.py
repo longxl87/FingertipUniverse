@@ -18,7 +18,7 @@ def cut_bins(x, n_bins=10, method='freq'):
         indices = np.linspace(0, len(sorted_data) - 1, n_bins + 1, dtype=int)
         bin_edges = sorted_data[indices]
         bin_edges = np.unique(bin_edges)
-        if len(bin_edges) < n_bins:
+        if len(bin_edges) < n_bins+1:
             bin_edges = np.insert(bin_edges, 0, -np.inf)
         else:
             bin_edges[0] = -np.inf
