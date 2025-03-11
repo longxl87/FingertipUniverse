@@ -22,6 +22,7 @@ def cut_bins(x, n_bins=10, method='freq'):
             bin_edges = np.insert(bin_edges, 0, -np.inf)
         else:
             bin_edges[0] = -np.inf
+        bin_edges[-1] = np.inf
         return bin_edges
     elif method == 'dist':
         max_v = np.max(data)
@@ -131,7 +132,7 @@ def make_bin(x, bins, num_fillna=-999, cate_fillna=""):
     :param cate_fillna: 类别特征默认的填充方式
     :return:
     """
-    data = np.asarray(x)
+    data = np.array(x,copy=True)
     if pd.api.types.is_numeric_dtype(x):
         bins = np.asarray(bins)
         data[np.isnan(data)] = num_fillna
