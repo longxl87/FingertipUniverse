@@ -12,7 +12,8 @@ from FingertipUniverse.feature_engine_utils import (
 calc_auc,
 calc_iv,
 calc_ks,
-calc_psi
+calc_psi,
+univariate
 )
 
 from FingertipUniverse.model_utils import (
