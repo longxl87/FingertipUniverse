@@ -1,4 +1,8 @@
+import logging
+
 from sqlalchemy import create_engine
+
+logger = logging.getLogger(__name__)
 
 def mysql_engine(host, port, user, passwd, db=None):
     """
@@ -14,4 +18,4 @@ def mysql_engine(host, port, user, passwd, db=None):
         engine = create_engine(f'mysql+pymysql://{user}:{passwd}@{host}:{port}/{db}')
         return engine
     except Exception as e:
-        print(f"An error occurred: {e}")
+        logger.error(f"An error occurred: {e}")
