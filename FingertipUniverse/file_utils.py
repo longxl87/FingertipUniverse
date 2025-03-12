@@ -76,6 +76,14 @@ def batch_load_data(file_paths, load_function=pd.read_parquet):
     return result
 
 def save_data_to_excel(df, sheet, row_number, col_number):
+    """
+    将指定的内容输出到对应的sheet页面中
+    :param df:
+    :param sheet:
+    :param row_number:
+    :param col_number:
+    :return:
+    """
     for row_num, index in enumerate(df.index, row_number):
         for col_num, col in enumerate(df.keys(), col_number):
             cell = sheet.cell(row=row_num, column=col_num, value=df[col][row_num - row_number])
