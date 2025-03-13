@@ -25,15 +25,12 @@ oppsite_feature_kfold,
 plot_roc_ks
 )
 
-from time_utils import first_day_of_week
+from time_utils import day_n_of_week
 
 from CONSTANT import (
-MON_PARTTEN,
-DAY_PARTTEN,
-STANDARD_TIME_PARTTEN,
-LONG_TIME_PARTTEN,
-LGB_PARAMS
+    LGB_PARAMS
 )
+from FingertipUniverse.CONSTANT import MON_PARTTEN, DAY_PARTTEN, STANDARD_TIME_PARTTEN, LONG_TIME_PARTTEN
 
 import logging
 log_fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

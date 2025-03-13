@@ -1,12 +1,7 @@
-
 MON_PARTTEN = '%Y-%m'
-
 DAY_PARTTEN = '%Y-%m-%d'
-
 STANDARD_TIME_PARTTEN = '%Y-%m-%d %H:%M:%S'
-
 LONG_TIME_PARTTEN = "%Y-%m-%d %H:%M:%S.%f"
-
 
 LGB_PARAMS = { # 汇总列出常用的参数
     "task": "train",
@@ -25,3 +20,4 @@ LGB_PARAMS = { # 汇总列出常用的参数
     'min_gain_to_split':0.05,
     "verbose": -1,
 }
+

@@ -78,6 +78,7 @@ def model_features(lgb_model, importance_type='gain',filter_zero=True):
     分析模型特征及权重
     :param lgb_model:
     :param importance_type:
+    :parm filter_zero:
     :return:
     """
     fea_rs = pd.DataFrame(
@@ -87,25 +88,25 @@ def model_features(lgb_model, importance_type='gain',filter_zero=True):
         fea_rs = fea_rs[fea_rs['importance'] > 0]
     return fea_rs
 
-def plot_roc_ks(y_true, y_scores, data_desc=None):
+def plot_roc_ks(y, x, data_desc=None):
     """
     绘制auc和ks
-    :param y_true:
-    :param y_scores:
+    :param y:
+    :param x:
     :param data_desc:
     :return:
     """
-    y_scores = np.asarray(y_scores)
-    y_true = np.asarray(y_true)
+    x = np.asarray(x)
+    y = np.asarray(y)
     # 计算FPR, TPR 和 AUC
-    fpr, tpr, _ = roc_curve(y_true, y_scores)
+    fpr, tpr, _ = roc_curve(y, x)
     roc_auc = auc(fpr, tpr)
     # 按照预测概率排序
-    sorted_indices = np.argsort(y_scores)[::-1]
-    sorted_y_true = y_true[sorted_indices]
+    sorted_indices = np.argsort(x)[::-1]
+    sorted_y_true = y[sorted_indices]
     # 计算累计分布
-    total_positives = np.sum(y_true == 1)
-    total_negatives = np.sum(y_true == 0)
+    total_positives = np.sum(y == 1)
+    total_negatives = np.sum(y == 0)
     cumulative_positives = np.cumsum(sorted_y_true == 1) / total_positives
     cumulative_negatives = np.cumsum(sorted_y_true == 0) / total_negatives
     # KS统计量

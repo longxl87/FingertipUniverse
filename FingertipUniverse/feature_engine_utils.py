@@ -1,6 +1,9 @@
 import numpy as np
 import pandas as pd
 import math
+import logging
+
+logger = logging.getLogger(__name__)
 
 from sklearn.metrics import (
     roc_auc_score,
@@ -160,3 +163,19 @@ def univariate(y, x, n_bins=10, bins=None, alpha=0.1, num_fill=-999.0, cate_fill
         iv=lambda x: x['iv'].sum()
     ).reset_index()
     return dti[['bin', 'bad', 'cnt', 'pct', 'brate', 'brate_cum', 'lift', 'woe', 'ks', 'iv', 'auc']]
+
+def feature_report(data_sets, x_cols, y):
+    assert len(data_sets) > 0 and len(data_sets[0]) < 4, f"datas只能是1-3个数据集"
+
+    if len(data_sets) == 1:
+        train,test,oot = data_sets[0],data_sets[0],data_sets[0]
+    elif len(data_sets) == 2:
+        train,test,oot = data_sets[0],data_sets[1],data_sets[1]
+    elif len(data_sets) == 3:
+        train,test,oot = data_sets[0],data_sets[1],data_sets[2]
+
+
+
+
+
+    pass
