@@ -85,7 +85,7 @@ def model_features(lgb_model, importance_type='gain',filter_zero=True):
         {"var": lgb_model.feature_name(), "imps": lgb_model.feature_importance(importance_type=importance_type)}
     ).sort_values("imps", ascending=False)
     if filter_zero:
-        fea_rs = fea_rs[fea_rs['importance'] > 0]
+        fea_rs = fea_rs[fea_rs['imps'] > 0]
     return fea_rs
 
 def plot_roc_ks(y, x, data_desc=None):
