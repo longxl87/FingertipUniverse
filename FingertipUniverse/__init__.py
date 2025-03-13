@@ -24,7 +24,7 @@ from FingertipUniverse.model_utils import (
     oppsite_feature_kfold,
     plot_roc_ks)
 
-from time_utils import day_n_of_week
+from FingertipUniverse.time_utils import day_n_of_week
 
 from FingertipUniverse.CONSTANT import (
     MON_PARTTEN,
