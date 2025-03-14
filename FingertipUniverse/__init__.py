@@ -9,7 +9,6 @@ from FingertipUniverse.CONSTANT import (
     STANDARD_TIME_PARTTEN,
     LONG_TIME_PARTTEN)
 
-
 from FingertipUniverse.db_utils import (
     mysql_engine)
 
