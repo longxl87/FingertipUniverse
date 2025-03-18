@@ -73,7 +73,7 @@ def oppsite_feature_kfold(df, model_feas, target, n_splits=5, random_state=42):
     oppsite_feas = list(set(oppsite_feas))
     return oppsite_feas
 
-def model_features(lgb_model, importance_type='gain',filter_zero=True):
+def lgb_model_features(lgb_model, importance_type='gain',filter_zero=True,retType='df'):
     """
     分析模型特征及权重
     :param lgb_model:
@@ -86,7 +86,10 @@ def model_features(lgb_model, importance_type='gain',filter_zero=True):
     ).sort_values("imps", ascending=False)
     if filter_zero:
         fea_rs = fea_rs[fea_rs['imps'] > 0]
-    return fea_rs
+    if retType == 'dict':
+        return fea_rs.set_index('var')['imps'].to_dict()
+    else:
+        return fea_rs
 
 def plot_roc_ks(y, x, data_desc=None):
     """
