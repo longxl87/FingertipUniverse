@@ -112,6 +112,17 @@ def calc_ks(y, x):
 
 
 def univariate(y, x, n_bins=10, bins=None, alpha=0.1, num_fill=-999.0, cate_fill=''):
+    """
+    分箱分析特征
+    :param y : array_like
+    :param x: array_like
+    :param n_bins: int
+    :param bins: list
+    :param alpha: float
+    :param num_fill: float
+    :param cate_fill: str
+    :return:
+    """
     y = np.array(y, copy=True, dtype=np.float64)
     if pd.api.types.is_numeric_dtype(x):
         x = np.array(x, copy=True, dtype=float)
@@ -136,17 +147,17 @@ def univariate(y, x, n_bins=10, bins=None, alpha=0.1, num_fill=-999.0, cate_fill
     br = data['y'].mean()
     dti = data.groupby('bin', observed=False).agg(
         bad=('y', 'sum'),
-        cnt=('y', 'count'),
+        total=('y', 'count'),
         brate=('y', 'mean')
     ).sort_values('bin', ascending=ascending).assign(
-        good=lambda x: x['cnt'] - x['bad'],
-        pct=lambda x: x['cnt'] / (x['cnt'].sum())
+        good=lambda x: x['total'] - x['bad'],
+        pct=lambda x: x['total'] / (x['total'].sum())
     ).assign(
         bad_cum=lambda x: x['bad'].cumsum(),
         good_cum=lambda x: x['good'].cumsum(),
         bad_prime=lambda x: x['bad'] + alpha,
         good_prime=lambda x: x['good'] + alpha,
-        lift=lambda x: x['brate'] / br
+        lift=lambda x:  (x['brate'] / br)
     ).assign(
         brate_cum=lambda x: x['bad_cum'] / (x['bad_cum'] + x['good_cum']),
         bad_cum_raito=lambda x: x['bad_cum'] / (x['bad'].sum()),
@@ -157,12 +168,12 @@ def univariate(y, x, n_bins=10, bins=None, alpha=0.1, num_fill=-999.0, cate_fill
         woe=lambda x: np.log(x['bad_ratio_prime'] / x['good_ratio_prime']),
     ).assign(
         ks=lambda x: abs(x['bad_cum_raito'] - x['good_cum_raito']),
-        iv=lambda x: (x['bad_ratio_prime'] - x['good_ratio_prime']) * x['woe'],
-        auc=auc
+        iv=lambda x: (x['bad_ratio_prime'] - x['good_ratio_prime']) * x['woe']
     ).assign(
-        iv=lambda x: x['iv'].sum()
+        iv=lambda x: x['iv'].sum(),
+        auc=auc
     ).reset_index()
-    return dti[['bin', 'bad', 'cnt', 'pct', 'brate', 'brate_cum', 'lift', 'woe', 'ks', 'iv', 'auc']]
+    return dti[['bin', 'bad', 'total', 'pct', 'brate', 'brate_cum', 'lift', 'woe', 'ks', 'iv', 'auc']]
 
 def feature_report(data_sets, x_cols, y):
     assert len(data_sets) > 0 and len(data_sets[0]) < 4, f"datas只能是1-3个数据集"
