@@ -32,7 +32,6 @@ from FingertipUniverse.file_utils import (
 from FingertipUniverse.model_utils import (
     prob2score,
     feature_class,
-    model_features,
     oppsite_features,
     oppsite_feature_kfold,
     plot_roc_ks)
