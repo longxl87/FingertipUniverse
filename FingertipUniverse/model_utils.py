@@ -236,6 +236,9 @@ def feature_univariates(data_sets, feature_list, target, n_bins=10, method='freq
     feature_summary_df['ratio'] = feature_summary_df['iv_oot'] / feature_summary_df['iv_train']
     feature_summary_df['ratio'] = feature_summary_df['ratio'].round(4)
     if save:
+        feature_summary_df['imps'] = feature_summary_df['iv_train'] + feature_summary_df['iv_test'] + feature_summary_df['iv_oot']
+        feature_summary_df = feature_summary_df[['imps','feature','iv_train','iv_test','iv_oot','csi(train-test)','csi(train-oot)','ratio']]
+
         wb = load_workbook(Path(__file__).parent / 'model_report_template_v2.xlsx')
         feature_summary_sheet = wb["feature_summary"]
         feature_bininfo_sheet = wb["feauture_bininfo"]
@@ -277,7 +280,7 @@ def model_report(data_sets, target,model_obj, time_col='loan_time',score_name='s
     :return:
     """
     feature_importance_dict = model_features(model_obj, importance_type='gain', retType='dict',filter_zero=False)
-    feature_list = feature_importance_dict['var'].to_list()
+    feature_list = feature_importance_dict.keys()
 
     assert len(data_sets) > 0 and len(data_sets) < 4, f"datas只能是1-3个数据集"
 
