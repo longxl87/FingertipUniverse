@@ -313,8 +313,7 @@ def model_report(data_sets,model_obj, target, time_col='loan_time',score_name='s
     oot['score'] = oot['prob'].map(p2score_fun)
 
     ## 计算特征报告格式
-    feature_summary_df, feature_bininfos = feature_univariates(data_sets,feature_list, target, n_bins,
-                                                               method)
+    feature_summary_df, feature_bininfos = feature_univariates(data_sets,feature_list, target, n_bins,method)
 
     if feature_importance_dict is not None:
         feature_summary_df['imps'] = feature_summary_df['feature'].map(feature_importance_dict)
@@ -335,8 +334,6 @@ def model_report(data_sets,model_obj, target, time_col='loan_time',score_name='s
         feature_info['bin'] = feature_info['bin'].astype(str)
         save_to_excel(feature_info, feature_bininfo_sheet, start_index, 1)
         start_index = start_index + len(feature_info) + 1
-
-
 
     # 生成 score_bininfo 的内容
     train_df = pd.concat([ train[['score', target]] ,
