@@ -96,7 +96,7 @@ def model_features(model, importance_type='gain', filter_zero=True, retType='df'
     :parm retType:
     :return:
     """
-    if isinstance(model,(lgb.Booster,lgb.LGBMRegressor,lgb.LGBMClassifier)): # 兼容lgb 的 原生和sklearn接口
+    if isinstance(model,(lgb.Booster,lgb.LGBMClassifier)): # 兼容lgb 的 原生和sklearn接口
         if isinstance(model,lgb.Booster):
             booster = model
         else: # 兼容lgb sklearn 接口
@@ -104,7 +104,7 @@ def model_features(model, importance_type='gain', filter_zero=True, retType='df'
         fea_rs = pd.DataFrame(
             {"var": booster.feature_name(), "imps": booster.feature_importance(importance_type=importance_type)}
         ).sort_values("imps", ascending=False)
-    elif isinstance(model, (xgb.sklearn.XGBClassifier, xgb.sklearn.XGBRegressor, xgb.core.Booster)): # 兼容xgb的原生和sklearn接口
+    elif isinstance(model, (xgb.sklearn.XGBClassifier, xgb.core.Booster)): # 兼容xgb的原生和sklearn接口
         if isinstance(model, xgb.core.Booster):
             booster = model
         else: # 兼容sklearn接口
@@ -300,9 +300,14 @@ def model_report(data_sets,model_obj, target, time_col='loan_time',score_name='s
     elif len(data_sets) == 3:
         train, test, oot = data_sets[0], data_sets[1], data_sets[2]
 
-    train['prob'] = model_obj.predict(train[feature_list])
-    test['prob'] = model_obj.predict(test[feature_list])
-    oot['prob'] = model_obj.predict(oot[feature_list])
+    if isinstance(model_obj, xgb.sklearn.XGBClassifier):
+        train['prob'] = model_obj.predict_proba(train[feature_list])[:,1]
+        test['prob'] = model_obj.predict_proba(test[feature_list])[:,1]
+        oot['prob'] = model_obj.predict_proba(oot[feature_list])[:,1]
+    else:
+        train['prob'] = model_obj.predict(train[feature_list])
+        test['prob'] = model_obj.predict(test[feature_list])
+        oot['prob'] = model_obj.predict(oot[feature_list])
     train['score'] = train['prob'].map(p2score_fun)
     test['score'] = test['prob'].map(p2score_fun)
     oot['score'] = oot['prob'].map(p2score_fun)
