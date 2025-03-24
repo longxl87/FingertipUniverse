@@ -13,8 +13,8 @@ from sklearn.model_selection import KFold
 from datetime import datetime
 from pathlib import Path
 
-from FingertipUniverse.file_utils import save_data_to_excel
-from FingertipUniverse.feature_engine_utils import univariate,calc_psi,calc_iv,calc_ks,calc_auc
+from FingertipUniverse.file_utils import save_to_excel
+from FingertipUniverse.feature_engine_utils import univariate,calc_psi,calc_ks,calc_auc
 from FingertipUniverse.binning_utils import cut_bins
 
 logger = logging.getLogger(__name__)
@@ -240,7 +240,7 @@ def feature_univariates(data_sets, feature_list, target, n_bins=10, method='freq
         feature_summary_sheet = wb["feature_summary"]
         feature_bininfo_sheet = wb["feauture_bininfo"]
         # 写 feature_summary
-        save_data_to_excel(feature_summary_df, feature_summary_sheet, 2, 1)
+        save_to_excel(feature_summary_df, feature_summary_sheet, 2, 1)
 
         feature_bininfos_list = [feature_bininfos[x] for x in feature_summary_df['feature'].to_list()]
 
@@ -248,7 +248,7 @@ def feature_univariates(data_sets, feature_list, target, n_bins=10, method='freq
         start_index = 3
         for feature_info in feature_bininfos_list:
             feature_info['bin'] = feature_info['bin'].astype(str)
-            save_data_to_excel(feature_info, feature_bininfo_sheet, start_index, 1)
+            save_to_excel(feature_info, feature_bininfo_sheet, start_index, 1)
             start_index = start_index + len(feature_info) + 1
 
         time_str = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -310,7 +310,7 @@ def model_report(data_sets, target,model_obj, time_col='loan_time',score_name='s
                                              'csi(train-oot)', 'ratio']].sort_values('imps', ascending=False)
 
     # 写 feature_summary
-    save_data_to_excel(feature_summary_df, feature_summary_sheet, 2, 1)
+    save_to_excel(feature_summary_df, feature_summary_sheet, 2, 1)
 
     feature_bininfos_list = [feature_bininfos[x] for x in feature_summary_df['feature'].to_list()]
 
@@ -318,7 +318,7 @@ def model_report(data_sets, target,model_obj, time_col='loan_time',score_name='s
     start_index = 3
     for feature_info in feature_bininfos_list:
         feature_info['bin'] = feature_info['bin'].astype(str)
-        save_data_to_excel(feature_info, feature_bininfo_sheet, start_index, 1)
+        save_to_excel(feature_info, feature_bininfo_sheet, start_index, 1)
         start_index = start_index + len(feature_info) + 1
 
 
@@ -331,21 +331,21 @@ def model_report(data_sets, target,model_obj, time_col='loan_time',score_name='s
     right_tbl = univariate(oot[target],oot['score'],  bins=score_bin1)
     tbl1 = left_tbl.merge(right_tbl, how='left', on='bin')
     tbl1['bin'] = tbl1['bin'].astype(str)
-    save_data_to_excel(tbl1, score_bininfo_sheet, 3, 1)
+    save_to_excel(tbl1, score_bininfo_sheet, 3, 1)
 
     score_bin2 = cut_bins(train_df['score'], n_bins=10, method='dist')
     left_tbl = univariate(train_df[target],train_df['score'],  bins=score_bin2)
     right_tbl = univariate(oot[target],oot['score'],  bins=score_bin2)
     tbl2 = left_tbl.merge(right_tbl, how='left', on='bin')
     tbl2['bin'] = tbl2['bin'].astype(str)
-    save_data_to_excel(tbl2, score_bininfo_sheet, 16, 1)
+    save_to_excel(tbl2, score_bininfo_sheet, 16, 1)
 
     score_bin3 = cut_bins(oot['score'], n_bins=10, method='freq')
     left_tbl = univariate(oot[target],oot['score'],  bins=score_bin3)
     right_tbl = univariate(train_df[target],train_df['score'],  bins=score_bin3)
     tbl3 = left_tbl.merge(right_tbl, how='left', on='bin')
     tbl3['bin'] = tbl3['bin'].astype(str)
-    save_data_to_excel(tbl3, score_bininfo_sheet, 29, 1)
+    save_to_excel(tbl3, score_bininfo_sheet, 29, 1)
 
     #  model_desc 页面
     model_desc_df = pd.DataFrame([{
@@ -358,7 +358,7 @@ def model_report(data_sets, target,model_obj, time_col='loan_time',score_name='s
         'auc_oot':calc_auc(oot[target], oot['prob']),
         'psi': calc_psi(train['score'], train['score']),
     }])
-    save_data_to_excel(model_desc_df,model_desc_sheet,4,2)
+    save_to_excel(model_desc_df,model_desc_sheet,4,2)
 
     data_statis = []
     def _data_base_info(df,name):
@@ -383,10 +383,10 @@ def model_report(data_sets, target,model_obj, time_col='loan_time',score_name='s
         total_df = pd.concat([train[[target]], test[[target]], oot[[target]]], axis=0)
     _data_base_info(total_df, 'total')
     data_info_df = pd.DataFrame(data_statis)
-    save_data_to_excel(data_info_df, model_sumary_sheet, 10, 2)
+    save_to_excel(data_info_df, model_sumary_sheet, 10, 2)
 
     score_name_df = pd.DataFrame({'model_name':[score_name]})
-    save_data_to_excel(score_name_df, model_sumary_sheet, 5, 2)
+    save_to_excel(score_name_df, model_sumary_sheet, 5, 2)
 
     time_str = datetime.now().strftime("%Y%m%d%H%M%S")
     file_name = f'model_report{time_str}.xlsx'
