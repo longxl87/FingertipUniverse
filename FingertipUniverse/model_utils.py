@@ -268,7 +268,7 @@ def feature_univariates(data_sets, feature_list, target, n_bins=10, method='freq
     return feature_summary_df, feature_bininfos
 
 
-def model_report(data_sets, target,model_obj, time_col='loan_time',score_name='score_v0',p2score_fun=prob2score):
+def model_report(data_sets,model_obj, target, time_col='loan_time',score_name='score_v0',p2score_fun=prob2score):
     """
     prob转化为概率分的工具
     :param data_sets :list[pd.Dataframe] 数据集
