@@ -89,3 +89,21 @@ def save_data_to_excel(df, sheet, row_number, col_number):
             cell = sheet.cell(row=row_num, column=col_num, value=df[col][row_num - row_number])
 
 
+def save_to_excel(data, sheet, row_number=1, col_number=1):
+    """
+    将数据（DataFrame 或 list of list）写入 openpyxl 的 Excel sheet，从指定的 (row_number, col_number) 开始。
+
+    :param data: Pandas DataFrame 或 list of list
+    :param sheet: openpyxl worksheet
+    :param row_number: 开始写入的行号（Excel 1-based index）
+    :param col_number: 开始写入的列号（Excel 1-based index）
+    """
+    # 如果是 Pandas DataFrame，则转换为 list of list
+    if isinstance(data, pd.DataFrame):
+        data = data.values.tolist()  # 转换为 list of list
+
+    # 遍历数据写入 Excel
+    for i, row in enumerate(data, start=row_number):
+        for j, value in enumerate(row, start=col_number):
+            sheet.cell(row=i, column=j, value=value)
+
