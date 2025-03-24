@@ -405,3 +405,66 @@ def model_report(data_sets,model_obj, target, time_col='loan_time',score_name='s
     wb.save(file_name)
     logger.info(f"报告保存文件:{file_name}")
 
+def lgb_train(data_sets,feature_list,target,params,log_evaluation_period=100,early_stopping_rounds=0,cate_fea=None):
+
+    from lightgbm import log_evaluation,early_stopping
+
+    train, test, oot = None, None, None
+    if len(data_sets) == 1:
+        train, test, oot = data_sets[0], data_sets[0], data_sets[0]
+    elif len(data_sets) == 2:
+        train, test, oot = data_sets[0], data_sets[1], data_sets[1]
+    elif len(data_sets) == 3:
+        train, test, oot = data_sets[0], data_sets[1], data_sets[2]
+
+    if (cate_fea is None) or (len(cate_fea) == 0):
+        train_data = lgb.Dataset(train[feature_list], label=train[target])
+        test_data = lgb.Dataset(test[feature_list], label=test[target])
+    else:
+        train_data = lgb.Dataset(train[feature_list], label=train[target], categorical_feature=cate_fea)
+        test_data = lgb.Dataset(test[feature_list], label=test[target], categorical_feature=cate_fea)
+
+
+    log_evaluation_obj,early_stopping_obj = None,None
+    if log_evaluation_period >0:
+        log_evaluation_obj  = log_evaluation(period=log_evaluation_period)
+    if early_stopping_rounds> 0 :
+        early_stopping_obj = early_stopping(stopping_rounds=100)
+
+    callbacks = [log_evaluation_obj,early_stopping_obj]
+    callbacks = [ x for x in callbacks if x is not None]
+
+    if params is None:
+        params = {
+            "task": "train",
+            "boosting_type": "gbdt",  # 设置提升类型
+            "objective": "binary",  # 目标函数
+            "metric": {"auc"},  # 评估函数
+            "num_leaves": 2,  # 叶子节点数
+            "n_estimators": 1000,
+            "learning_rate": 0.1,  # 学习速率
+            "verbose": -1,  # <0 显示致命的，=0 显示错误 (警告)，> 显示信息
+        }
+
+    model = None
+    if len(callbacks)>0:
+        model = lgb.train(params, train_data, valid_sets=[test_data], callbacks=callbacks)
+    else:
+        model = lgb.train(params, train_data, valid_sets=[test_data])
+
+    train['prob'] = model.predict(train[feature_list])
+    test['prob'] = model.predict(test[feature_list])
+    oot['prob'] = model.predict(oot[feature_list])
+
+    auc_train = calc_auc(train[target], train['prob'])
+    auc_test = calc_auc(test[target], test['prob'])
+    auc_oot = calc_auc(oot[target], oot['prob'])
+
+    ks_train = calc_ks(train[target], train["prob"])
+    ks_test = calc_ks(test[target], test['prob'])
+    ks_oot = calc_ks(oot[target], oot['prob'])
+
+    print(f"AUC: {auc_train},{auc_test},{auc_oot}", f"num trees:{model.num_trees()}")
+    print(f"ks: {ks_train},{ks_test},{ks_oot}", f"num trees:{model.num_trees()}")
+
+    return model

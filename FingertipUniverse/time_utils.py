@@ -3,7 +3,7 @@ from datetime import timedelta
 import pandas as pd
 
 
-def day_n_of_week(date_time,n=1):
+def week_n(date_time,n=1):
     """
     获取当周的 星期N
     :param date_time: 需要转换的时间
