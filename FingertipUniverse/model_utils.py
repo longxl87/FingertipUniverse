@@ -239,6 +239,13 @@ def feature_univariates(data_sets, feature_list, target, n_bins=10, method='freq
         wb = load_workbook(Path(__file__).parent / 'model_report_template_v2.xlsx')
         feature_summary_sheet = wb["feature_summary"]
         feature_bininfo_sheet = wb["feauture_bininfo"]
+
+        # 遍历并删除指定 Sheet
+        for sheet_name in ['model_sumary','model_desc','score_bininfo']:
+            if sheet_name in wb.sheetnames:  # 确保 Sheet 存在
+                sheet = wb[sheet_name]
+                wb.remove(sheet)
+
         # 写 feature_summary
         save_to_excel(feature_summary_df, feature_summary_sheet, 2, 1)
 
