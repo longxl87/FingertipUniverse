@@ -402,3 +402,5 @@ def model_report(data_sets, target,model_obj, time_col='loan_time',score_name='s
     file_name = f'model_report{time_str}.xlsx'
     wb.save(file_name)
     logger.info(f"报告保存文件:{file_name}")
+
+
