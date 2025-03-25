@@ -27,7 +27,8 @@ from FingertipUniverse.feature_engine_utils import (
 from FingertipUniverse.file_utils import (
     data_of_dir,
     batch_load_data,
-    save_data_to_excel)
+    save_to_excel
+)
 
 from FingertipUniverse.model_utils import (
     prob2score,

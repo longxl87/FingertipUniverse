@@ -9,7 +9,6 @@ def set_warnings(need=True):
     else:
         warnings.filterwarnings('ignore')
 
-
 def set_pd_show(max_rows=500, max_columns=200, max_colwidth=300):
     if max_rows:
         pd.set_option("display.max_rows", max_rows)
