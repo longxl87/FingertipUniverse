@@ -4,6 +4,7 @@ import traceback
 
 import pandas as pd
 from tqdm import tqdm
+from openpyxl.worksheet.worksheet import Worksheet
 
 
 def data_of_dir(dir_path, contains_flags="", start_time=None, end_time=None):
@@ -89,18 +90,26 @@ def save_data_to_excel(df, sheet, row_number, col_number):
             cell = sheet.cell(row=row_num, column=col_num, value=df[col][row_num - row_number])
 
 
-def save_to_excel(data, sheet, row_number=1, col_number=1):
+def save_to_excel(data, sheet, row_number=1, col_number=1, write_header=False):
     """
     将数据（DataFrame 或 list of list）写入 openpyxl 的 Excel sheet，从指定的 (row_number, col_number) 开始。
-
     :param data: Pandas DataFrame 或 list of list
     :param sheet: openpyxl worksheet
     :param row_number: 开始写入的行号（Excel 1-based index）
     :param col_number: 开始写入的列号（Excel 1-based index）
+    :param write_header: 是否写入列名（仅在 data 为 DataFrame 时有效）
     """
-    # 如果是 Pandas DataFrame，则转换为 list of list
+    if not isinstance(sheet, Worksheet):
+        raise TypeError("参数 `sheet` 必须是 openpyxl 的 Worksheet 对象")
+
     if isinstance(data, pd.DataFrame):
-        data = data.values.tolist()  # 转换为 list of list
+        # 如果需要写入列名
+        if write_header:
+            data = [data.columns.tolist()] + data.values.tolist()
+        else:
+            data = data.values.tolist()  # 转换为 list of list
+    elif not isinstance(data, list) or not all(isinstance(row, list) for row in data):
+        raise TypeError("参数 `data` 必须是 Pandas DataFrame 或 list of list")
 
     # 遍历数据写入 Excel
     for i, row in enumerate(data, start=row_number):

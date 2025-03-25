@@ -405,6 +405,18 @@ def model_report(data_sets,model_obj, target, time_col='loan_time',score_name='s
     wb.save(file_name)
     logger.info(f"报告保存文件:{file_name}")
 
+def _ks_eval_func(y_pred, data):
+    y_true = data.get_label()
+    fpr, tpr, _ = roc_curve(y_true, y_pred)
+    ks = np.max(np.abs(fpr - tpr))
+    return 'KS', ks, True
+
+def _rmse_eval(y_pred, data):
+    y_true = data.get_label()  # 获取真实标签
+    mse = np.mean((y_pred - y_true) ** 2)  # 均方误差
+    rmse = np.sqrt(mse)  # 平方根均方误差
+    return 'rmse', rmse  # 返回评估指标名称和分数
+
 def lgb_train(data_sets,feature_list,target,params,log_evaluation_period=100,early_stopping_rounds=0,cate_fea=None):
 
     from lightgbm import log_evaluation,early_stopping
@@ -446,11 +458,10 @@ def lgb_train(data_sets,feature_list,target,params,log_evaluation_period=100,ear
             "verbose": -1,  # <0 显示致命的，=0 显示错误 (警告)，> 显示信息
         }
 
-    model = None
     if len(callbacks)>0:
         model = lgb.train(params, train_data, valid_sets=[test_data], callbacks=callbacks)
     else:
-        model = lgb.train(params, train_data, valid_sets=[test_data])
+        model = lgb.train(params, train_data, valid_sets=[test_data]) # feval=_custom_ks_eval_func
 
     train['prob'] = model.predict(train[feature_list])
     test['prob'] = model.predict(test[feature_list])
@@ -464,7 +475,7 @@ def lgb_train(data_sets,feature_list,target,params,log_evaluation_period=100,ear
     ks_test = calc_ks(test[target], test['prob'])
     ks_oot = calc_ks(oot[target], oot['prob'])
 
-    print(f"AUC: {auc_train},{auc_test},{auc_oot}", f"num trees:{model.num_trees()}")
-    print(f"ks: {ks_train},{ks_test},{ks_oot}", f"num trees:{model.num_trees()}")
+    logger.warning(f"AUC: {auc_train},{auc_test},{auc_oot}", f"num trees:{model.num_trees()}")
+    logger.warning(f"ks: {ks_train},{ks_test},{ks_oot}", f"num trees:{model.num_trees()}")
 
     return model

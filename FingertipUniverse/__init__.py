@@ -34,10 +34,14 @@ from FingertipUniverse.model_utils import (
     feature_class,
     oppsite_features,
     oppsite_feature_kfold,
-    plot_roc_ks)
+    plot_roc_ks,
+    lgb_train,
+    model_features,
+    model_report
+)
 
 from FingertipUniverse.time_utils import (
-    day_n_of_week)
+    week_n)
 
 import logging
 log_fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

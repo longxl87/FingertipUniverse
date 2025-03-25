@@ -3,19 +3,32 @@ from datetime import timedelta
 import pandas as pd
 
 
-def week_n(date_time,n=1):
+def week_n(date_time, n=1, rettype="str"):
     """
-    获取当周的 星期N
-    :param date_time: 需要转换的时间
-    :param n: 星期n 必须是 1-7之间的数
-    :return:
+    获取给定日期所在周的星期N（1=周一，7=周日）。
+
+    :param date_time: datetime 或 时间字符串（标准格式）
+    :param n: 目标星期几（必须是 1-7 之间）
+    :param rettype: 返回类型，"str" 返回 'YYYY-MM-DD'，"datetime" 返回 datetime 对象
+    :return: 该周的星期N对应的日期（字符串或 datetime）
     """
-    assert (n>0) and (n<8) ,f'n的参数必须在1-7之间'
-    if isinstance(date_time, str):
-        date_time = pd.to_datetime(date_time)
-    delt = (n-1) -date_time.weekday()
-    start_of_week = date_time + timedelta(days=delt)
-    return start_of_week.strftime('%Y-%m-%d')
+    if not (1 <= n <= 7):
+        raise ValueError("参数 `n` 必须在 1-7 之间（1=周一，7=周日）")
+
+    if rettype not in {"str", "datetime"}:
+        raise ValueError("参数 `rettype` 只能是 'str' 或 'datetime'")
+
+    date_time = pd.to_datetime(date_time)  # 转换为 datetime
+    delt = (n - 1) - date_time.weekday()  # 计算偏移量
+    target_date = date_time + timedelta(days=delt)  # 计算目标日期
+    target_date = target_date.normalize()
+    return target_date.strftime('%Y-%m-%d') if rettype == "str" else target_date # 返回格式化日期
+
+
+if __name__ == '__main__':
+    from datetime import datetime, timedelta
+    tmp = week_n(datetime.now(),1,rettype="datetime")
+    print(tmp)
 
 
 
