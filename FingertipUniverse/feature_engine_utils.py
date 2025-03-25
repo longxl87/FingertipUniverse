@@ -12,8 +12,7 @@ from sklearn.metrics import (
 from FingertipUniverse.binning_utils import (
     cut_bins,
     make_bin,
-    chi2merge
-)
+    chi2merge)
 
 def calc_auc(y, x):
     """
@@ -57,7 +56,6 @@ def calc_psi(y, x, n_bins=10, method='freq', alpha=0.1):
 
     psi = sum([x[3] for x in psi_mapping])
     return psi
-
 
 def calc_iv(y, x, n_bins=10, method='freq', fillna=-999, alpha=0.1):
     """
@@ -109,7 +107,6 @@ def calc_ks(y, x):
     fpr, tpr, _ = roc_curve(y, x)
     ks = np.max(np.abs(fpr - tpr))
     return ks
-
 
 def univariate(y, x, n_bins=10, bins=None, alpha=0.1, num_fill=-999.0, cate_fill=''):
     """

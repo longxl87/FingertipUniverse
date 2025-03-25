@@ -4,7 +4,6 @@ from tqdm import tqdm
 import lightgbm as lgb
 import xgboost as xgb
 from openpyxl import load_workbook
-import logging
 
 from matplotlib import pyplot as plt
 from sklearn.metrics import roc_curve, auc
@@ -16,7 +15,7 @@ from pathlib import Path
 from FingertipUniverse.file_utils import save_to_excel
 from FingertipUniverse.feature_engine_utils import univariate,calc_psi,calc_ks,calc_auc
 from FingertipUniverse.binning_utils import cut_bins
-
+import logging
 logger = logging.getLogger(__name__)
 
 

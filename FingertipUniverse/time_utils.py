@@ -1,5 +1,4 @@
-from datetime import timedelta
-
+from datetime import timedelta,datetime
 import pandas as pd
 
 
@@ -25,10 +24,10 @@ def week_n(date_time, n=1, rettype="str"):
     return target_date.strftime('%Y-%m-%d') if rettype == "str" else target_date # 返回格式化日期
 
 
-if __name__ == '__main__':
-    from datetime import datetime, timedelta
-    tmp = week_n(datetime.now(),1,rettype="datetime")
-    print(tmp)
+# if __name__ == '__main__':
+#     from datetime import datetime, timedelta
+#     tmp = week_n(datetime.now(),1,rettype="datetime")
+#     print(tmp)
 
 
 
