@@ -38,7 +38,8 @@ from FingertipUniverse.model_utils import (
     plot_roc_ks,
     lgb_train,
     model_features,
-    model_report
+    model_report,
+    feature_report
 )
 
 from FingertipUniverse.time_utils import (

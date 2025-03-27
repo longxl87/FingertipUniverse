@@ -172,7 +172,7 @@ def plot_roc_ks(y, x, data_desc=None):
     plt.tight_layout(rect=[0, 0, 1, 1])  # rect参数确保标题不会被裁剪
     plt.show()
 
-def feature_univariates(data_sets, feature_list, target, n_bins=10, method='freq',save=False):
+def feature_report(data_sets, feature_list, target, n_bins=10, method='freq', save=False):
     """
     基于数据集中的结果分析特征列表
     :param data_sets:
@@ -312,7 +312,7 @@ def model_report(data_sets,model_obj, target, time_col='loan_time',score_name='s
     oot['score'] = oot['prob'].map(p2score_fun)
 
     ## 计算特征报告格式
-    feature_summary_df, feature_bininfos = feature_univariates(data_sets,feature_list, target, n_bins,method)
+    feature_summary_df, feature_bininfos = feature_report(data_sets, feature_list, target, n_bins, method)
 
     if feature_importance_dict is not None:
         feature_summary_df['imps'] = feature_summary_df['feature'].map(feature_importance_dict)
