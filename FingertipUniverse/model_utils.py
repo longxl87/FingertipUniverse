@@ -367,7 +367,7 @@ def model_report(data_sets,model_obj, target, time_col='loan_time',score_name='s
         'auc_train': calc_auc(train[target], train['prob']),
         'auc_test': calc_auc(test[target], test['prob']),
         'auc_oot':calc_auc(oot[target], oot['prob']),
-        'psi': calc_psi(train['score'], train['score']),
+        'psi': calc_psi(train['score'], oot['score']),
     }])
     save_to_excel(model_desc_df,model_desc_sheet,4,2)
 
